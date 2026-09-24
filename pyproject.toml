@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "security-invariant-lab"
+version = "0.1.0"
+description = "Invariant-driven security research framework for stateful systems"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "Lucilfer12"}]
+license = {file = "LICENSE"}
+
+[project.scripts]
+silab = "invariant_lab.cli.main:main"
+
+[tool.setuptools.packages.find]
+include = ["invariant_lab*"]

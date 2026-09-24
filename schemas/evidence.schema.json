@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Security Invariant Lab Evidence",
+  "type": "object",
+  "required": ["version", "results"],
+  "properties": {
+    "version": {"type": "integer", "const": 1},
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["case", "passed", "finding"],
+        "properties": {
+          "case": {"type": "string"},
+          "passed": {"type": "boolean"},
+          "error": {"type": ["string", "null"]},
+          "finding": {"type": ["object", "null"]}
+        }
+      }
+    }
+  }
+}
