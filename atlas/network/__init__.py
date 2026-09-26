@@ -5,3 +5,4 @@ from .dns import DNSQuestion, DNSRecord, DNSError, build_query, decode_address, 
 from .http import HTTPError, HTTPRequest, build_response, parse_request
 from .secure_transport import QUICConnection, TLS13Session, TLSState, stateless_reset_token
 from .mesh import Endpoint, Service, ServiceMesh
+from .firewall import Action, Firewall, FirewallRule, NatBinding, Packet as FirewallPacket, SourceNat

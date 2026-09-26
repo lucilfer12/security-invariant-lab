@@ -72,6 +72,24 @@ The package boundaries are ready to grow into networking, virtual memory, filesy
 - HDR-style bounded histogram with mean and quantile queries.
 - Regression suite expanded to 28 passing tests.
 
+## Eighth/tenth-wave delivered
+
+- Copy-on-write virtual memory layered over the existing virtual-memory model.
+- Deterministic AI prompt/tool security gateway with allowlists, call limits, and credential redaction.
+- DeFi attack scenarios covering oracle manipulation, flash-loan amplification, sandwich simulation, and liquidation risk.
+- Database planning, blockchain P2P gossip, bridge replay protection, and block-device driver abstractions.
+- Global event-driven simulator sized for 10,000 nodes and 100,000 services.
+- Deterministic security forensics evidence log with timeline and integrity verification.
+- Build provenance and SBOM canonicalization with deterministic SHA-256 digests.
+
+## Eleventh-wave delivered
+
+- Causal-order utilities for Lamport/vector-clock reasoning and explicit concurrent-event classification.
+- Stateful firewall rules with protocol, CIDR, and port matching plus deterministic default policy.
+- Source-NAT binding allocation with stable connection reuse.
+- Merkle tree construction, inclusion proofs, and tamper verification.
+- Regression suite expanded to 42 passing tests.
+
 ## Engineering guarantee
 
-All additions in the current ATLAS branch are additive. Existing public imports were restored after regression checks exposed compatibility gaps.
+All additions in the current ATLAS branch are additive. Existing public imports were restored after regression checks exposed compatibility gaps; no historical security findings, tests, fixtures, or research artifacts are intentionally removed.
