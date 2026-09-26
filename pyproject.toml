@@ -22,4 +22,4 @@ atlas = "atlas.cli:main"
 silab-dashboard = "invariant_lab.platform.server:main"
 
 [tool.setuptools.packages.find]
-include = ["invariant_lab*", "atlas*"]
+include = ["invariant_lab*", "atlas*", "protocols*", "invariant_lab.web*"]

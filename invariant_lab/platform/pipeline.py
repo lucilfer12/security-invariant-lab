@@ -20,6 +20,7 @@ from .security_coverage import security_coverage
 from .taint import taint_report
 from .threat import build_threat_model
 from .types import ScanResult
+from protocols.packs import load_default_registry
 
 def _tool_path(command: str) -> str | None:
     env = os.getenv("SILAB_" + command.upper() + "_BIN")
@@ -53,6 +54,13 @@ def scan_project(root: str | Path, out_dir: str | Path = ".silab") -> tuple[Scan
     threat = build_threat_model(result)
     taint = taint_report(result)
     root_causes = root_cause_candidates(result)
+    pack_registry = load_default_registry()
+    identifiers = {
+        token
+        for contract in result.contracts
+        for token in list(contract.state_variables) + [f.name for f in contract.functions]
+    }
+    matched_packs = pack_registry.match(identifiers)
     result.metrics.update({
         "candidate_invariants": len(result.invariants),
         "attack_graph_nodes": len(graph.nodes),
@@ -65,6 +73,7 @@ def scan_project(root: str | Path, out_dir: str | Path = ".silab") -> tuple[Scan
         "property_percent": coverage["property_percent"],
         "detector_count": len(registry.all()),
         "root_cause_hypotheses": len(root_causes),
+        "matched_protocol_packs": len(matched_packs),
     })
     out.mkdir(parents=True, exist_ok=True)
     (out / "scan.json").write_text(
