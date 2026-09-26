@@ -25,7 +25,8 @@ class GraphSnapshot:
         }
 
 def build_graph(result: ScanResult) -> GraphSnapshot:
-    nodes: set[str] = {"ATTACKER", "STATE"}    edges = list(result.edges)
+    nodes: set[str] = {"ATTACKER", "STATE"}
+    edges = list(result.edges)
     for contract in result.contracts:
         nodes.add(contract.name)
         for fn in contract.functions:

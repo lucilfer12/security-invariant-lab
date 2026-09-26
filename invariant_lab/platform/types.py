@@ -28,7 +28,9 @@ class FunctionRecord:
     line: int
     signature: str
     body: str
-    calls: tuple[str, ...] = ()@dataclass(frozen=True)
+    calls: tuple[str, ...] = ()
+
+@dataclass(frozen=True)
 class ContractRecord:
     name: str
     file: str
@@ -61,7 +63,9 @@ class AttackSurface:
     external_entrypoints: tuple[str, ...]
     external_calls: tuple[str, ...]
     delegatecalls: tuple[str, ...]
-    low_level_calls: tuple[str, ...]@dataclass
+    low_level_calls: tuple[str, ...]
+
+@dataclass
 class ScanResult:
     root: str
     contracts: list[ContractRecord] = field(default_factory=list)
