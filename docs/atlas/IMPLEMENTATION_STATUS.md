@@ -106,6 +106,13 @@ The package boundaries are ready to grow into networking, virtual memory, filesy
 - CI coverage for the thirteenth wave.
 - Regression suite expanded to 48 passing tests.
 
+## Fourteenth-wave delivered
+
+- Lease-based deterministic leader election with term monotonicity and expiry/renewal semantics.
+- Heartbeat-miss failure detector with explicit suspicion thresholds and recovery.
+- CI coverage for the fourteenth wave.
+- Regression suite expanded to 50 passing tests.
+
 ## Engineering guarantee
 
 All additions in the current ATLAS branch are additive. Existing public imports were restored after regression checks exposed compatibility gaps; no historical security findings, tests, fixtures, or research artifacts are intentionally removed.
