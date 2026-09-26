@@ -18,6 +18,7 @@ from invariant_lab.platform.policy import LEVELS, SecurityPolicy, from_file as l
 from invariant_lab.platform.replay import load_bundle
 from invariant_lab.platform.scanner import SolidityScanner
 from invariant_lab.platform.server import serve
+from invariant_lab.web import inspect_headers, inspect_openapi, inspect_url
 
 def _demo(name: str) -> int:
     runpy.run_module(f"examples.{name}", run_name="__main__")
@@ -82,6 +83,12 @@ def main() -> int:
     experiment = sub.add_parser("experiment", help="run a JSON research experiment")
     experiment.add_argument("spec", type=Path)
     experiment.add_argument("--out", default=".silab/experiments")
+
+    web_api = sub.add_parser("web-openapi", help="passively inspect an OpenAPI document")
+    web_api.add_argument("file", type=Path)
+
+    web_url = sub.add_parser("web-url", help="parse a URL and report whether it is local")
+    web_url.add_argument("url")
 
     args = parser.parse_args()
 
@@ -165,6 +172,15 @@ def main() -> int:
         spec = load_spec(args.spec)
         payload = run_experiment(spec, args.out)
         print(json.dumps(payload, indent=2, default=str))
+        return 0
+
+    if args.command == "web-openapi":
+        findings = inspect_openapi(args.file)
+        print(json.dumps([f.__dict__ for f in findings], indent=2))
+        return 0
+
+    if args.command == "web-url":
+        print(json.dumps(inspect_url(args.url), indent=2))
         return 0
 
     return 1

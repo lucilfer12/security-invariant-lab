@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
@@ -53,7 +54,7 @@ def inspect_openapi(path: str | Path) -> list[WebFinding]:
                 continue
             if isinstance(operation, dict) and "security" not in operation and security_defaults is None:
                 out.append(WebFinding(
-                    f"API-{abs(hash(route + method)) % 10**10:010d}",
+                    f"API-{hashlib.sha1((route + method).encode()).hexdigest()[:10].upper()}",
                     "api-auth",
                     f"No declared OpenAPI security requirement for {method.upper()} {route}",
                     "low",
