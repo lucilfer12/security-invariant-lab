@@ -90,6 +90,14 @@ The package boundaries are ready to grow into networking, virtual memory, filesy
 - Merkle tree construction, inclusion proofs, and tamper verification.
 - Regression suite expanded to 42 passing tests.
 
+## Twelfth-wave delivered
+
+- Deterministic quorum tracking with majority/default and explicit quorum sizes.
+- Monotonic nonce replay protection for identity-bound protocol messages.
+- Windowed SLO availability accounting with compliance and error-budget reporting.
+- CI coverage for the eleventh and twelfth waves.
+- Regression suite expanded to 45 passing tests.
+
 ## Engineering guarantee
 
 All additions in the current ATLAS branch are additive. Existing public imports were restored after regression checks exposed compatibility gaps; no historical security findings, tests, fixtures, or research artifacts are intentionally removed.

@@ -22,6 +22,8 @@ jobs:
         run: python -m invariant_lab.cli.main scan targets/bridge-lab --out .silab/ci
       - name: ATLAS eleventh-wave tests
         run: python -m atlas.eleventh_wave_test
+      - name: ATLAS twelfth-wave tests
+        run: python -m atlas.twelfth_wave_test
 
   foundry-regression:
     runs-on: ubuntu-latest

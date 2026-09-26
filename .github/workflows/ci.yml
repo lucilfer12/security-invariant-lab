@@ -26,6 +26,8 @@ jobs:
         run: python -m atlas.third_wave_test
       - name: ATLAS eleventh-wave tests
         run: python -m atlas.eleventh_wave_test
+      - name: ATLAS twelfth-wave tests
+        run: python -m atlas.twelfth_wave_test
       - name: ATLAS CLI smoke test
         run: python -m atlas.cli self-test
       - name: Demo smoke test
