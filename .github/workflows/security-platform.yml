@@ -28,6 +28,8 @@ jobs:
         run: python -m atlas.thirteenth_wave_test
       - name: ATLAS fourteenth-wave tests
         run: python -m atlas.fourteenth_wave_test
+      - name: ATLAS fifteenth-wave tests
+        run: python -m atlas.fifteenth_wave_test
 
   foundry-regression:
     runs-on: ubuntu-latest

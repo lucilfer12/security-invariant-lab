@@ -113,6 +113,14 @@ The package boundaries are ready to grow into networking, virtual memory, filesy
 - CI coverage for the fourteenth wave.
 - Regression suite expanded to 50 passing tests.
 
+## Fifteenth-wave delivered
+
+- Compiler type-checking primitives and verified stack bytecode execution.
+- Ordered B-tree-style database index with point/range operations.
+- Threshold secret sharing over GF(257) with subset reconstruction.
+- CI coverage for the fifteenth wave.
+- Regression suite expanded to 53 passing tests.
+
 ## Engineering guarantee
 
 All additions in the current ATLAS branch are additive. Existing public imports were restored after regression checks exposed compatibility gaps; no historical security findings, tests, fixtures, or research artifacts are intentionally removed.
