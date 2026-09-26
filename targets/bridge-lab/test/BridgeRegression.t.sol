@@ -45,9 +45,11 @@ contract BridgeRegressionTest is Test {
         BridgeAccountingFixed bridge = new BridgeAccountingFixed();
         vm.deal(address(bridge), 2 ether);
         bytes32 id = keccak256("demo-message");
-        bridge.execute(id, payable(address(this)), 1 ether);
+        address recipient = address(0xBEEF);
+        bridge.execute(id, payable(recipient), 1 ether);
+        assertEq(recipient.balance, 1 ether);
         assertEq(bridge.processed(id), true);
         vm.expectRevert("already processed");
-        bridge.execute(id, payable(address(this)), 1 ether);
+        bridge.execute(id, payable(recipient), 1 ether);
     }
 }

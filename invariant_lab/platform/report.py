@@ -81,9 +81,16 @@ small{color:#93a4c7}
 <h2>Candidate Security Properties</h2>
 <table><tr><th>Name</th><th>Expression</th><th>Confidence</th></tr>{invs_html}</table>
 <h2>Machine-readable snapshot</h2><pre>{data_html}</pre>
-</main></body></html>""".format(
-        root=html.escape(result.root), cards=metric_cards,
-        findings_html=findings_html, invs_html=invs_html, data_html=data_html
+</main></body></html>""".replace(
+        "{root}", html.escape(result.root)
+    ).replace(
+        "{cards}", metric_cards
+    ).replace(
+        "{findings_html}", findings_html
+    ).replace(
+        "{invs_html}", invs_html
+    ).replace(
+        "{data_html}", data_html
     )
 
 def write_reports(result: ScanResult, out_dir: str | Path) -> tuple[Path, Path]:

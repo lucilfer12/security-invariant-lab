@@ -1,4 +1,8 @@
 __pycache__/
+.env
+.env.*
+*.local
+.atlas/
 *.py[cod]
 *.egg-info/
 .pytest_cache/
@@ -11,4 +15,9 @@ build/
 htmlcov/
 reports/*.json
 reports/*.md
+.silab/
+**/.silab/
+targets/bridge-lab/lib/forge-std/
+targets/bridge-lab/out/
+targets/bridge-lab/cache/
 .DS_Store

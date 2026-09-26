@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Security Invariant Lab Scan",
+  "type": "object",
+  "required": ["root", "contracts", "findings", "invariants", "edges", "metrics"],
+  "properties": {
+    "root": {"type": "string"},
+    "contracts": {"type": "array", "items": {"$ref": "#/$defs/contract"}},
+    "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+    "invariants": {"type": "array", "items": {"$ref": "#/$defs/invariant"}},
+    "edges": {"type": "array", "items": {"$ref": "#/$defs/edge"}},
+    "metrics": {"type": "object", "additionalProperties": true}
+  },
+  "$defs": {
+    "function": {
+      "type": "object",
+      "required": ["name", "visibility", "modifiers", "payable", "mutating", "line", "signature", "body"],
+      "properties": {
+        "name": {"type": "string"},
+        "visibility": {"type": "string"},
+        "modifiers": {"type": "array", "items": {"type": "string"}},
+        "payable": {"type": "boolean"},
+        "mutating": {"type": "boolean"},
+        "line": {"type": "integer", "minimum": 1},
+        "signature": {"type": "string"},
+        "body": {"type": "string"},
+        "calls": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "contract": {
+      "type": "object",
+      "required": ["name", "file", "line", "bases", "functions", "state_variables", "events", "imports"],
+      "properties": {
+        "name": {"type": "string"},
+        "file": {"type": "string"},
+        "line": {"type": "integer", "minimum": 1},
+        "bases": {"type": "array", "items": {"type": "string"}},
+        "functions": {"type": "array", "items": {"$ref": "#/$defs/function"}},
+        "state_variables": {"type": "array", "items": {"type": "string"}},
+        "events": {"type": "array", "items": {"type": "string"}},
+        "imports": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "finding": {
+      "type": "object",
+      "required": ["id", "kind", "title", "severity", "confidence", "file", "line", "evidence", "recommendation", "tags", "metadata"],
+      "properties": {
+        "id": {"type": "string"},
+        "kind": {"type": "string"},
+        "title": {"type": "string"},
+        "severity": {"type": "string"},
+        "confidence": {"type": "string"},
+        "file": {"type": "string"},
+        "line": {"type": "integer", "minimum": 1},
+        "evidence": {"type": "string"},
+        "recommendation": {"type": "string"},
+        "tags": {"type": "array", "items": {"type": "string"}},
+        "metadata": {"type": "object"}
+      }
+    },
+    "invariant": {
+      "type": "object",
+      "required": ["name", "expression", "rationale", "source", "confidence"],
+      "properties": {
+        "name": {"type": "string"},
+        "expression": {"type": "string"},
+        "rationale": {"type": "string"},
+        "source": {"type": "string"},
+        "confidence": {"type": "string"}
+      }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["source", "target", "kind", "evidence"],
+      "properties": {
+        "source": {"type": "string"},
+        "target": {"type": "string"},
+        "kind": {"type": "string"},
+        "evidence": {"type": "string"}
+      }
+    }
+  }
+}

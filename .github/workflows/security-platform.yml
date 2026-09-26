@@ -1,0 +1,37 @@
+name: security-platform
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python-platform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package
+        run: python -m pip install -e .
+      - name: Compile
+        run: python -m compileall -q invariant_lab adapters
+      - name: Regression tests
+        run: python -m unittest discover -s tests -v
+      - name: Security intelligence scan
+        run: python -m invariant_lab.cli.main scan targets/bridge-lab --out .silab/ci
+
+  foundry-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+      - name: Install forge-std
+        working-directory: targets/bridge-lab
+        run: forge install foundry-rs/forge-std --no-commit
+      - name: Forge regression
+        working-directory: targets/bridge-lab
+        run: forge test -vvv

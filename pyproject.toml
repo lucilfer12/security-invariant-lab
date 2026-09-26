@@ -4,15 +4,22 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "security-invariant-lab"
-version = "0.1.0"
-description = "Invariant-driven security research framework for stateful systems"
+version = "0.5.0"
+description = "Executable security research platform for stateful systems, protocols, and authorized EVM targets"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{name = "Lucilfer12"}]
 license = {file = "LICENSE"}
 
+[project.optional-dependencies]
+verification = [
+  "z3-solver>=4.13",
+]
+
 [project.scripts]
 silab = "invariant_lab.cli.main:main"
+atlas = "atlas.cli:main"
+silab-dashboard = "invariant_lab.platform.server:main"
 
 [tool.setuptools.packages.find]
-include = ["invariant_lab*"]
+include = ["invariant_lab*", "atlas*"]

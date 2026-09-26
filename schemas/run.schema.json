@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Security Invariant Lab Run Bundle",
+  "type": "object",
+  "required": ["meta", "bundle_id", "kind"],
+  "properties": {
+    "bundle_id": {"type": "string"},
+    "kind": {"type": "string"},
+    "meta": {
+      "type": "object",
+      "required": ["schema_version", "created_at", "python"],
+      "properties": {
+        "schema_version": {"type": "string"},
+        "created_at": {"type": "string"},
+        "platform": {"type": "string"},
+        "python": {"type": "string"},
+        "git_commit": {"type": ["string", "null"]}
+      }
+    },
+    "target": {"type": "string"},
+    "metrics": {"type": "object"},
+    "properties": {"type": "array"},
+    "attack_paths": {"type": "array"},
+    "finding_ids": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

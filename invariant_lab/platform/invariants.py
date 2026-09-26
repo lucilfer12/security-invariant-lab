@@ -53,6 +53,25 @@ def candidates_for_contract(contract: ContractRecord) -> list[CandidateInvariant
             source=contract.file,
             confidence="low",
         ))
+    if "processed" in ids and any(
+        token in f.name.lower() for f in contract.functions
+        for token in ("execute", "process", "claim", "release", "relay")
+    ):
+        candidates.append(CandidateInvariant(
+            name=f"{contract.name}:message_replay",
+            expression="processed(message_id) == true after successful execution and never resets",
+            rationale="Message-processing state suggests one-time execution and replay resistance.",
+            source=contract.file,
+            confidence="high",
+        ))
+    if "nonce" in ids and any("reset" in f.name.lower() for f in contract.functions):
+        candidates.append(CandidateInvariant(
+            name=f"{contract.name}:nonce_never_resets",
+            expression="nonce_after >= nonce_before",
+            rationale="A reset-like function conflicts with monotonic replay protection.",
+            source=contract.file,
+            confidence="high",
+        ))
     if any("mint" in f.name.lower() for f in contract.functions) and "totalSupply" in ids:
         candidates.append(CandidateInvariant(
             name=f"{contract.name}:mint_supply_consistency",

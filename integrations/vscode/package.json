@@ -1,0 +1,25 @@
+{
+  "name": "security-invariant-lab",
+  "displayName": "Security Invariant Lab",
+  "description": "Run SIL security scans and open evidence artifacts from VS Code.",
+  "version": "0.5.0",
+  "publisher": "lucilfer12",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onCommand:silab.scanWorkspace"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "silab.scanWorkspace",
+        "title": "SIL: Scan Workspace"
+      },
+      {
+        "command": "silab.openReport",
+        "title": "SIL: Open Security Report"
+      }
+    ]
+  }
+}

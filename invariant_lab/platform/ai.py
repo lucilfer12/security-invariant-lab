@@ -30,8 +30,7 @@ class GeminiClient:
         return bool(self.config.api_key)
 
     def _url(self, model: str) -> str:
-        key = self.config.api_key or ""
-        return f"{self.config.base_url}/models/{model}:generateContent?key={key}"
+        return f"{self.config.base_url}/models/{model}:generateContent"
     def generate(self, prompt: str, *, model: str | None = None) -> str:
         if not self.enabled:
             raise RuntimeError("GEMINI_API_KEY is not configured")
@@ -43,7 +42,7 @@ class GeminiClient:
         request = urllib.request.Request(
             self._url(model),
             data=body,
-            headers={"Content-Type": "application/json"},
+            headers={"Content-Type": "application/json", "x-goog-api-key": self.config.api_key or ""},
             method="POST",
         )
         try:

@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "packs": [
+    {
+      "id": "access-control",
+      "description": "Authorization and privileged-state properties",
+      "signals": ["owner", "admin", "role", "onlyRole", "onlyOwner"],
+      "properties": [
+        "unauthorized_caller => privileged_state_unchanged",
+        "role_grant requires authorized admin",
+        "role_revoke invalidates privileged capability"
+      ]
+    },
+    {
+      "id": "replay",
+      "description": "Nonce and message replay properties",
+      "signals": ["nonce", "processed", "messageId", "execute", "relay"],
+      "properties": [
+        "processed(message_id) becomes true after successful execution",
+        "processed(message_id) never resets",
+        "nonce is monotonic"
+      ]
+    },
+    {
+      "id": "defi-accounting",
+      "description": "Conservation, solvency and precision properties",
+      "signals": ["totalAssets", "totalSupply", "balances", "debt", "collateral", "shares"],
+      "properties": [
+        "assets >= liabilities",
+        "aggregate balances agree with protocol accounting",
+        "rounding cannot create value without an explicit fee path"
+      ]
+    },
+    {
+      "id": "oracle",
+      "description": "Price-source integrity and freshness",
+      "signals": ["oracle", "price", "latestRoundData", "twap"],
+      "properties": [
+        "price is positive",
+        "price is fresh",
+        "decimals are normalized",
+        "source and answer domains are validated"
+      ]
+    },
+    {
+      "id": "bridge",
+      "description": "Cross-domain message and asset lifecycle properties",
+      "signals": ["message", "processed", "nonce", "relayer", "proof", "finality"],
+      "properties": [
+        "message IDs are one-time",
+        "proof binds message contents",
+        "minted/released value matches validated message amount",
+        "finality assumptions are explicit"
+      ]
+    },
+    {
+      "id": "upgradeability",
+      "description": "Proxy and implementation lifecycle properties",
+      "signals": ["proxy", "implementation", "upgrade", "delegatecall", "initializer"],
+      "properties": [
+        "only authorized actors can upgrade",
+        "initializer executes in the intended lifecycle state",
+        "storage layout remains compatible"
+      ]
+    },
+    {
+      "id": "cryptography",
+      "description": "Signature, hash and domain-binding properties",
+      "signals": ["ecrecover", "signature", "EIP712", "merkle", "hash"],
+      "properties": [
+        "domain separation is explicit",
+        "nonce/replay binding is explicit",
+        "signer validity is checked",
+        "encoded messages are unambiguous"
+      ]
+    }
+  ]
+}

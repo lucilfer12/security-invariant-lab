@@ -33,39 +33,41 @@ class AdaptiveSequenceFuzzer:
         self.corpus: dict[str, tuple[Event, ...]] = {}
     def _mutate(self, base: tuple[Event, ...], rng: random.Random) -> tuple[Event, ...]:
         events = list(base)
-        if not events or rng.random() < 0.4:
+        roll = rng.random()
+        if not events or roll < 0.4:
             events.insert(rng.randrange(len(events) + 1), self.event_factory(rng))
-        elif rng.random() < 0.75:
+        elif roll < 0.78:
             events[rng.randrange(len(events))] = self.event_factory(rng)
-        else:
+        elif len(events) > 1:
             del events[rng.randrange(len(events))]
-        events = events[: self.config.max_length]
+        if len(events) > self.config.max_length:
+            start = rng.randrange(len(events) - self.config.max_length + 1)
+            events = events[start:start + self.config.max_length]
         return tuple(events)
 
     def cases(self) -> list[Case]:
         rng = random.Random(self.config.seed)
-        seeds: list[tuple[Event, ...]] = [tuple(self.event_factory(rng) for _ in range(rng.randint(1, 4)))]
-        for _ in range(self.config.cases):
-            if self.corpus and rng.random() < 0.8:
-                base = rng.choice(list(self.corpus.values()))
-                events = self._mutate(base, rng)
-            else:
-                base = rng.choice(seeds)
-                events = self._mutate(base, rng) if rng.random() < 0.7 else base
-            self.corpus.setdefault(_sequence_key(events), events)
+        generated: list[Case] = []
+        seeds: list[tuple[Event, ...]] = [
+            tuple(self.event_factory(rng) for _ in range(rng.randint(1, min(4, self.config.max_length))))
+        ]
+        for index in range(self.config.cases):
+            pool = list(self.corpus.values()) or seeds
+            base = rng.choice(pool)
+            events = self._mutate(base, rng) if rng.random() < 0.85 else base
+            key = _sequence_key(events)
+            self.corpus.setdefault(key, events)
             if len(self.corpus) > self.config.corpus_limit:
-                self.corpus.pop(next(iter(self.corpus)))
-            yield_case = Case(
-                name=f"adaptive-{len(seeds):05d}",
+                oldest = next(iter(self.corpus))
+                self.corpus.pop(oldest)
+            generated.append(Case(
+                name=f"adaptive-{index:05d}",
                 events=events,
                 metadata={"seed": self.config.seed, "strategy": "state-corpus"},
-            )
+            ))
             seeds.append(events)
-            yield_case  # keeps intent explicit
-        return [
-            Case(name=f"adaptive-{i:05d}", events=events, metadata={"seed": self.config.seed, "strategy": "state-corpus"})
-            for i, events in enumerate(list(self.corpus.values())[: self.config.cases])
-        ]
+        return generated
+
     def run(self, engine: Engine) -> tuple[list, FuzzTelemetry]:
         cases = self.cases()
         results = engine.run(cases)

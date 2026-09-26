@@ -7,10 +7,14 @@ from pathlib import Path
 
 from invariant_lab.core.minimize import minimize_trace
 from invariant_lab.platform.ai import ai_report
+from invariant_lab.platform.baseline import compare_scans, load_scan
+from invariant_lab.platform.capabilities import manifest
+from invariant_lab.platform.experiment import load_spec, run as run_experiment
 from invariant_lab.platform.graphs import build_graph, to_dot
 from invariant_lab.platform.invariants import discover_invariants, render_invariant_markdown
 from invariant_lab.platform.mutation import suggest_mutations
 from invariant_lab.platform.pipeline import forge_test, scan_project
+from invariant_lab.platform.policy import LEVELS, SecurityPolicy, from_file as load_policy
 from invariant_lab.platform.replay import load_bundle
 from invariant_lab.platform.scanner import SolidityScanner
 from invariant_lab.platform.server import serve
@@ -22,6 +26,13 @@ def _demo(name: str) -> int:
 def _scan_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("path", type=Path)
     parser.add_argument("--out", default=".silab")
+    parser.add_argument(
+        "--fail-on",
+        choices=tuple(LEVELS.keys()),
+        default="none",
+        help="exit non-zero when a finding reaches this severity",
+    )
+    parser.add_argument("--max-findings", type=int, default=None)
 
 def main() -> int:
     parser = argparse.ArgumentParser(
@@ -61,6 +72,17 @@ def main() -> int:
     dash.add_argument("--dir", default=".silab")
     dash.add_argument("--host", default="127.0.0.1")
     dash.add_argument("--port", type=int, default=8765)
+
+    caps = sub.add_parser("capabilities", help="show implemented and extension capabilities")
+
+    diff = sub.add_parser("diff", help="compare two machine-readable scan snapshots")
+    diff.add_argument("baseline", type=Path)
+    diff.add_argument("current", type=Path)
+
+    experiment = sub.add_parser("experiment", help="run a JSON research experiment")
+    experiment.add_argument("spec", type=Path)
+    experiment.add_argument("--out", default=".silab/experiments")
+
     args = parser.parse_args()
 
     if args.command == "demo":
@@ -78,8 +100,14 @@ def main() -> int:
 
     if args.command == "scan":
         result, out = scan_project(args.path, args.out)
-        print(json.dumps({"out": str(out.resolve()), "metrics": result.metrics}, indent=2))
-        return 0
+        payload = {
+            "out": str(out.resolve()),
+            "metrics": result.metrics,
+            "policy": SecurityPolicy(args.fail_on, args.max_findings).to_dict(),
+            "policy_failed": SecurityPolicy(args.fail_on, args.max_findings).should_fail(result.findings),
+        }
+        print(json.dumps(payload, indent=2))
+        return 1 if payload["policy_failed"] else 0
 
     if args.command == "graph":
         result, _ = scan_project(args.path, args.out)
@@ -121,6 +149,22 @@ def main() -> int:
 
     if args.command == "dashboard":
         serve(args.dir, args.host, args.port)
+        return 0
+
+    if args.command == "capabilities":
+        print(json.dumps(manifest(), indent=2))
+        return 0
+
+    if args.command == "diff":
+        baseline = load_scan(args.baseline)
+        current = load_scan(args.current)
+        print(json.dumps(compare_scans(baseline, current), indent=2))
+        return 0
+
+    if args.command == "experiment":
+        spec = load_spec(args.spec)
+        payload = run_experiment(spec, args.out)
+        print(json.dumps(payload, indent=2, default=str))
         return 0
 
     return 1

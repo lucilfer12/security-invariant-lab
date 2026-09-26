@@ -13,8 +13,14 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q invariant_lab examples tests
+        run: python -m compileall -q invariant_lab atlas examples tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
+      - name: ATLAS self-test
+        run: python -m atlas.tests
+      - name: ATLAS subsystem tests
+        run: python -m atlas.subsystems_test
+      - name: ATLAS CLI smoke test
+        run: python -m atlas.cli self-test
       - name: Demo smoke test
         run: python -m invariant_lab.cli.main demo all
