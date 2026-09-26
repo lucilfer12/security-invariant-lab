@@ -1,3 +1,2 @@
-from .primitives import sha256, hmac_sha256, hkdf_expand
-
-__all__ = ["sha256", "hmac_sha256", "hkdf_expand"]
+from .primitives import hkdf_expand, hmac_sha256, sha256
+from .secure import AEAD, CryptoUnavailable, Ed25519Keypair, X25519, derive_key, secure_compare
