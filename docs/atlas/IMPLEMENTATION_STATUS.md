@@ -98,6 +98,14 @@ The package boundaries are ready to grow into networking, virtual memory, filesy
 - CI coverage for the eleventh and twelfth waves.
 - Regression suite expanded to 45 passing tests.
 
+## Thirteenth-wave delivered
+
+- SWIM-like deterministic membership table with incarnation ordering and explicit alive/suspect/dead states.
+- CRDT primitives for grow-only counters and deterministic last-writer-wins registers.
+- Integer token-bucket rate limiting with keyed buckets, retry timing, and monotonic ticks.
+- CI coverage for the thirteenth wave.
+- Regression suite expanded to 48 passing tests.
+
 ## Engineering guarantee
 
 All additions in the current ATLAS branch are additive. Existing public imports were restored after regression checks exposed compatibility gaps; no historical security findings, tests, fixtures, or research artifacts are intentionally removed.
