@@ -20,6 +20,10 @@ jobs:
         run: python -m atlas.tests
       - name: ATLAS subsystem tests
         run: python -m atlas.subsystems_test
+      - name: ATLAS second-wave tests
+        run: python -m atlas.second_wave_test
+      - name: ATLAS third-wave tests
+        run: python -m atlas.third_wave_test
       - name: ATLAS CLI smoke test
         run: python -m atlas.cli self-test
       - name: Demo smoke test

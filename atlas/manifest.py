@@ -18,5 +18,7 @@ class Manifest:
 
 def default_manifest() -> Manifest:
     caps = ("isa", "runtime", "policy", "capability", "distributed",
-            "cas", "wal", "protocol", "silab")
+            "cas", "wal", "protocol", "silab", "identity", "consensus",
+            "build", "simulation", "blockchain-vm", "ai-security",
+            "compiler", "os", "cloud", "packages", "formal")
     return Manifest(capabilities=caps)

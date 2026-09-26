@@ -31,3 +31,12 @@ The package boundaries are ready to grow into networking, virtual memory, filesy
 - Minimal SQL parser/executor layered beside MVCC.
 - TCP session state machine reference model.
 - Histograms and metrics registry.
+
+## Third-wave delivered
+
+- Tiny infix compiler to an explicit intermediate representation with constant folding.
+- In-memory filesystem and process table reference models.
+- Cloud resource controller with CPU/memory/storage quotas.
+- Content-addressed package registry with integrity verification.
+- Bounded state-space invariant checker with counterexample traces.
+- CI coverage for all ATLAS self-test waves.
