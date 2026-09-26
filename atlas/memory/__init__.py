@@ -1,3 +1,2 @@
-from .vm import Permission, PageTable, VirtualMemory
-
-__all__ = ["Permission", "PageTable", "VirtualMemory"]
+from .vm import Page, PageTable, Permission, VirtualMemory
+from .advanced import CopyOnWriteMemory, Frame
