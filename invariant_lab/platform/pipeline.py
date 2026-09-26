@@ -7,19 +7,24 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+from .dependencies import dependency_report
 from .detectors import builtin_registry
+from .evm_artifacts import artifact_report
+from .evidence_graph import build_evidence_graph
 from .export import write_exports
 from .graphs import attack_paths, build_graph, to_dot
 from .invariants import discover_invariants, property_statuses
 from .mutation import suggest_mutations
 from .replay import write_bundle
+from .regression import write_regression_skeletons
 from .report import write_reports
 from .rootcause import root_cause_candidates
+from .polyglot import scan_source_tree
 from .scanner import SolidityScanner, attack_surface
 from .security_coverage import security_coverage
 from .taint import taint_report
 from .threat import build_threat_model
-from .types import ScanResult
+from .types import FindingRecord, ScanResult
 from protocols.packs import load_default_registry
 
 def _tool_path(command: str) -> str | None:
@@ -45,6 +50,23 @@ def scan_project(root: str | Path, out_dir: str | Path = ".silab") -> tuple[Scan
     root = Path(root).resolve()
     out = Path(out_dir)
     result = SolidityScanner(root).scan()
+    source_findings, language_counts = scan_source_tree(root)
+    result.findings.extend(
+        FindingRecord(
+            id=f.id,
+            kind=f.kind,
+            title=f.title,
+            severity="medium",
+            confidence=f.confidence,
+            file=f.file,
+            line=f.line,
+            evidence=f.evidence,
+            recommendation=f.recommendation,
+            tags=("polyglot", f.language),
+            metadata={},
+        )
+        for f in source_findings
+    )
     result.invariants.extend(discover_invariants(result))
     registry = builtin_registry()
     result.findings.extend(registry.run_all(result))
@@ -61,6 +83,9 @@ def scan_project(root: str | Path, out_dir: str | Path = ".silab") -> tuple[Scan
         for token in list(contract.state_variables) + [f.name for f in contract.functions]
     }
     matched_packs = pack_registry.match(identifiers)
+    artifact_inventory = artifact_report(root)
+    evidence_graph = build_evidence_graph(result, graph)
+    dependencies = dependency_report(root)
     result.metrics.update({
         "candidate_invariants": len(result.invariants),
         "attack_graph_nodes": len(graph.nodes),
@@ -74,6 +99,12 @@ def scan_project(root: str | Path, out_dir: str | Path = ".silab") -> tuple[Scan
         "detector_count": len(registry.all()),
         "root_cause_hypotheses": len(root_causes),
         "matched_protocol_packs": len(matched_packs),
+        "compiled_artifacts": len(artifact_inventory),
+        "evidence_graph_nodes": len(evidence_graph.nodes),
+        "evidence_graph_edges": len(evidence_graph.edges),
+        "polyglot_findings": len(source_findings),
+        "source_files_by_language": language_counts,
+        "dependency_files": len(dependencies),
     })
     out.mkdir(parents=True, exist_ok=True)
     (out / "scan.json").write_text(
@@ -86,6 +117,28 @@ def scan_project(root: str | Path, out_dir: str | Path = ".silab") -> tuple[Scan
     (out / "attack-surface.json").write_text(json.dumps(attack_surface(result), indent=2, sort_keys=True) + "\n", encoding="utf-8")
     (out / "properties.json").write_text(json.dumps(property_statuses(result.invariants), indent=2) + "\n", encoding="utf-8")
     (out / "graph.dot").write_text(to_dot(graph), encoding="utf-8")
+    (out / "evidence-graph.json").write_text(
+        json.dumps(evidence_graph.to_dict(), indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    (out / "source-findings.json").write_text(
+        json.dumps([f.__dict__ for f in source_findings], indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    (out / "dependencies.json").write_text(
+        json.dumps(dependencies, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    (out / "evm-artifacts.json").write_text(
+        json.dumps(artifact_inventory, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    (out / "protocol-packs.json").write_text(
+        json.dumps(matched_packs, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    regression_paths = write_regression_skeletons(result.findings, out / "regression")
+    result.metrics["regression_skeletons"] = len(regression_paths)
     mutation_count = sum(len(suggest_mutations(c.file)) for c in result.contracts)
     result.metrics["mutation_candidates"] = mutation_count
     payload = {

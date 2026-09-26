@@ -10,9 +10,11 @@ class SecurityPolicy:
     max_findings: int | None = None
 
     def should_fail(self, findings) -> bool:
-        threshold = LEVELS.get(self.fail_on, LEVELS["high"])
         if self.max_findings is not None and len(findings) > self.max_findings:
             return True
+        if self.fail_on == "none":
+            return False
+        threshold = LEVELS.get(self.fail_on, LEVELS["high"])
         for finding in findings:
             if LEVELS.get(finding.severity, LEVELS["medium"]) >= threshold:
                 return True

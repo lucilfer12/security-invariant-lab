@@ -18,7 +18,9 @@ from invariant_lab.platform.policy import LEVELS, SecurityPolicy, from_file as l
 from invariant_lab.platform.replay import load_bundle
 from invariant_lab.platform.scanner import SolidityScanner
 from invariant_lab.platform.server import serve
-from invariant_lab.web import inspect_headers, inspect_openapi, inspect_url
+from invariant_lab.platform.unified import unified_manifest
+from invariant_lab.web import inspect_openapi, inspect_url
+from invariant_lab.web.localhost import probe
 
 def _demo(name: str) -> int:
     runpy.run_module(f"examples.{name}", run_name="__main__")
@@ -89,6 +91,12 @@ def main() -> int:
 
     web_url = sub.add_parser("web-url", help="parse a URL and report whether it is local")
     web_url.add_argument("url")
+
+    web_probe = sub.add_parser("web-probe", help="passively inspect a localhost HTTP endpoint")
+    web_probe.add_argument("url")
+    web_probe.add_argument("--timeout", type=int, default=5)
+
+    unified = sub.add_parser("unified", help="show the SIL + ATLAS platform manifest")
 
     args = parser.parse_args()
 
@@ -181,6 +189,14 @@ def main() -> int:
 
     if args.command == "web-url":
         print(json.dumps(inspect_url(args.url), indent=2))
+        return 0
+
+    if args.command == "web-probe":
+        print(json.dumps(probe(args.url, timeout=args.timeout), indent=2))
+        return 0
+
+    if args.command == "unified":
+        print(json.dumps(unified_manifest(), indent=2))
         return 0
 
     return 1

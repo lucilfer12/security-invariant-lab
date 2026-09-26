@@ -19,3 +19,15 @@ Existing `invariant_lab`, findings, fixtures, examples, reports, schemas, and hi
 ## Next build surface
 
 The package boundaries are ready to grow into networking, virtual memory, filesystem, database, container, hypervisor, cryptography, blockchain, and AI-runtime layers without coupling them directly to the legacy scanner.
+
+## Second-wave delivered
+
+- Identity/IAM principals, roles, permissions, audit events, and bounded delegation.
+- Raft-style consensus reference state machine with terms, log entries, and commit index.
+- Deterministic build manifests and content-based cache keys.
+- Virtual cluster simulator with scheduled node up/down events.
+- Stack-based blockchain VM with gas accounting and persistent storage.
+- Agent tool-security sandbox with allowlists, call limits, and secret redaction.
+- Minimal SQL parser/executor layered beside MVCC.
+- TCP session state machine reference model.
+- Histograms and metrics registry.
